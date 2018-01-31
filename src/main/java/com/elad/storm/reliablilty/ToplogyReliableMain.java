@@ -11,7 +11,7 @@ public class ToplogyReliableMain {
 
     public static void main(String[] args) throws InterruptedException {
         TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("Reliable-Spout", new ReliableWordReader());
+        builder.setSpout("Reliable-Spout", new ReliableWordReaderSpout());
         builder.setBolt("Random-Failure-Bolt",
                 new RandomFailureBolt()).shuffleGrouping("Reliable-Spout");
 

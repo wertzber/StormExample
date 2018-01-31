@@ -21,12 +21,11 @@ public class MyTopology {
 
         Config conf = new Config();
         conf.setDebug(true); //see every emit in log
-        conf.put("fileToWrite", "/Users/eladw/git-dp/storm-example/src/main/resources/output/sample-topology.txt");
-
+        conf.put("fileToWrite", "/Users/eladw/git-dp/stormExample/src/main/resources/output/sample-topology.txt");
         LocalCluster cluster = new LocalCluster();
         try{
             cluster.submitTopology("stock-Tracker-Topology", conf, topology);
-            Thread.sleep(10000);
+            Thread.sleep(200000);
 
         } finally {
             cluster.shutdown();

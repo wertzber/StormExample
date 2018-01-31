@@ -21,15 +21,11 @@ import java.util.Map;
 public class YfBolt extends BaseBasicBolt {
 
     private PrintWriter writer;
+    private String filename;
 
     @Override
     public void prepare(Map stormConf, TopologyContext context) {
-        String filename = stormConf.get("fileToWrite").toString();
-        try{
-            this.writer = new PrintWriter(filename, "UTF-8");
-        } catch (Exception e){
-            throw new RuntimeException("Error opening file [" + filename + "]");
-        }
+       this.filename = stormConf.get("fileToWrite").toString();;
     }
 
     @Override
@@ -38,6 +34,12 @@ public class YfBolt extends BaseBasicBolt {
     }
 
     public void execute(Tuple input, BasicOutputCollector collector) {
+        try{
+            this.writer = new PrintWriter(filename, "UTF-8");
+        } catch (Exception e){
+            throw new RuntimeException("Error opening file [" + filename + "]");
+        }
+
         String symbol = input.getValue(0).toString();
         String timestamp = input.getString(1);
         Double price = (Double) input.getValueByField("price");
@@ -50,7 +52,13 @@ public class YfBolt extends BaseBasicBolt {
         }
 
         collector.emit(new Values(symbol, timestamp, price, gain));
-        writer.println(symbol + "," + timestamp + "," + price + "," + gain);
+        writer.append(symbol + "," + timestamp + "," + price + "," + gain + "\n");
+        writer.flush();
+        try{
+            writer.close();
+        } catch (Exception e){
+            System.out.println("### Failed close file:"+ filename);
+        }
 
 
     }

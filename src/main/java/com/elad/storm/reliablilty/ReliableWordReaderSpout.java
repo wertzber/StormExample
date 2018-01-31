@@ -22,14 +22,14 @@ import java.util.Map;
 /**
  * Created by eladw on 12/21/17.
  */
-public class ReliableWordReader extends BaseRichSpout {
+public class ReliableWordReaderSpout extends BaseRichSpout {
 
     private static final Integer MAX_FAILURES = 3;
     private SpoutOutputCollector collector;
     private FileReader fileReader;
     private BufferedReader reader;
-    private Map<Integer, String> allMessages;
-    private List<Integer> toSend;
+    private Map<Integer, String> allMessages; //input all messages
+    private List<Integer> toSend; //only some will be sent
     private Map<Integer, Integer> msgFailureCount;
 
     public void open(Map conf, TopologyContext topologyContext, SpoutOutputCollector spoutOutputCollector) {
@@ -67,7 +67,7 @@ public class ReliableWordReader extends BaseRichSpout {
 
     @Override
     public void ack(Object msgId) {
-        System.out.println("Sending msg [" + msgId + "] success");
+        System.out.println("######1 Sending msg [" + msgId + "] success");
     }
 
     @Override
@@ -81,9 +81,9 @@ public class ReliableWordReader extends BaseRichSpout {
         if(failures < MAX_FAILURES){
             msgFailureCount.put(failedId, failures);
             toSend.add(failedId);
-            System.out.println("Re-sending message[" + failedId +"]");
+            System.out.println("######2 Re-sending message[" + failedId +"]");
         } else {
-            System.out.println("sending message[" + failedId +"] failed !!!!!");
+            System.out.println("######3 sending message[" + failedId +"] failed !!!!!");
         }
     }
 }
